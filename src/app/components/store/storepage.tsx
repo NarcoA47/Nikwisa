@@ -80,21 +80,21 @@ const StorePage: React.FC = () => {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 mt-4">
             {products.map((product, index) => (
                 <Link
-                href={`/products/${product.name
-                  ?.toLowerCase()
-                  .replace(/\s+/g, "-")}`}
+                href={`/products/${(typeof product.name === "string" ? product.name.toLowerCase().replace(/\s+/g, "-") : "")}`}
                 key={index}
                 >
                 {/* Product Card */}
                 <div className="bg-white text-center rounded-lg overflow-hidden shadow-md text-gray-800 hover:shadow-lg transition duration-200 cursor-pointer">
-                  <img
+                  <Image
                   src={product.image}
-                  alt={product.name}
+                  alt={String(product.name)}
+                  width={160}
+                  height={160}
                   className="w-full h-40 object-contain p-4"
                   />
                   <div className="p-2">
                   <h4 className="font-bold text-sm text-gray-800 mt-2">
-                    {product.name}
+                    {String(product.name)}
                   </h4>
                   <p className="text-xs text-gray-500 mt-1">
                     {product.price}
