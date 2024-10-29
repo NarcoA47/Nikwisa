@@ -4,7 +4,7 @@ import { ReactNode } from 'react';
 
 // Interfaces
 interface Product {
-  name: any;
+  name: unknown;
   stock: ReactNode;
   rating: number;
   id: number;
