@@ -60,6 +60,23 @@ export const fetchProducts = createAsyncThunk(
   }
 );
 
+// Async thunk for fetching products by store ID
+export const fetchProductsByStoreId = createAsyncThunk(
+  'products/fetchProductsByStoreId',
+  async (storeId: string, thunkAPI) => {
+    try {
+      const response = await axios.get(`${process.env.NEXT_PUBLIC_API_ENDPOINT}/stores/${storeId}/products`);
+      return response.data as FetchProductsPayload;
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response) {
+        return thunkAPI.rejectWithValue(error.response.data.message);
+      } else {
+        return thunkAPI.rejectWithValue('An unknown error occurred');
+      }
+    }
+  }
+);
+
 // Async thunk for adding a product
 export const addProduct = createAsyncThunk('products/addProduct', async (product: Omit<Product, 'id'>, thunkAPI) => {
   try {
@@ -106,6 +123,18 @@ const productSlice = createSlice({
       state.products = action.payload.results;
     });
     builder.addCase(fetchProducts.rejected, (state, action) => {
+      state.loading = false;
+      state.error = action.payload as string;
+    });
+    builder.addCase(fetchProductsByStoreId.pending, (state) => {
+      state.loading = true;
+      state.error = null;
+    });
+    builder.addCase(fetchProductsByStoreId.fulfilled, (state, action: PayloadAction<FetchProductsPayload>) => {
+      state.loading = false;
+      state.products = action.payload.results;
+    });
+    builder.addCase(fetchProductsByStoreId.rejected, (state, action) => {
       state.loading = false;
       state.error = action.payload as string;
     });

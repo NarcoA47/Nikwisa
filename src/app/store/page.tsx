@@ -1,12 +1,14 @@
-// import React, { createContext } from 'react';
+import React from 'react';
+import StoreCard from '../components/store/storepage';
 import Navbar from '../components/navbar';
-import StorePAge from '../components/store/storepage';
 
-export default function Home() {
+const Home: React.FC = () => {
   return (
-    <div>
+    <div className="container mx-auto p-4">
       <Navbar/>
-      <StorePAge/>
+      <StoreCard/>
     </div>
   );
-}
+};
+
+export default Home;
