@@ -16,7 +16,7 @@ const StoreDetailPage: React.FC = () => {
   const { storeId } = useParams();
   const dispatch = useDispatch<AppDispatch>();
   const store = useSelector((state: RootState) => state.store.selectedStore);
-  const products = useSelector((state: RootState) => state.product.products);
+  const products = useSelector((state: RootState) => state.product.products) as { name: string; image: string; price: string; stock: string; rating: number }[];
   const loading = useSelector((state: RootState) => state.store.loading);
   const error = useSelector((state: RootState) => state.store.error);
 
@@ -92,7 +92,7 @@ const StoreDetailPage: React.FC = () => {
 
           {/* Product Grid */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 mt-4">
-            {products.map((product, index) => (
+            {products.map((product: { name: string; image: string; price: string; stock: string; rating: number }, index) => (
               <Link
                 href={`/products/${product.name.toLowerCase().replace(/\s+/g, '-')}`}
                 key={index}
