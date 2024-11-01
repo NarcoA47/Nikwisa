@@ -1,10 +1,10 @@
 "use client";
 import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState, AppDispatch } from '../../../reducers/store';
 import { fetchCategories, fetchProducts } from '../../../reducers/productSlice';
 import SortingBar from '../SortingBar';
-import Link from 'next/link';
 
 export interface Product {
   id: number;
@@ -24,6 +24,7 @@ export interface Category {
 
 const Products = () => {
   const dispatch = useDispatch<AppDispatch>();
+  const router = useRouter();
   const categories = useSelector((state: RootState) => state.product.categories);
   const products = useSelector((state: RootState) => state.product.products);
   const [activeCategory, setActiveCategory] = useState<number | null>(null);
@@ -38,6 +39,10 @@ const Products = () => {
       setActiveCategory(categories[0].id); // Set the first category as the default active category
     }
   }, [categories]);
+
+  const handleProductClick = (productId: number) => {
+    router.push(`/single-product/${productId}`);
+  };
 
   return (
     <>
@@ -61,41 +66,40 @@ const Products = () => {
 
           {/* Render Products Here */}
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 md:gap-6 mt-4">
-            {products.map((product, index) => (
-              <Link
-                href={`/products/${product.title.toLowerCase().replace(/\s+/g, "-")}`}
-                key={index}
+            {products.map((product) => (
+              <div
+                key={product.id}
+                onClick={() => handleProductClick(product.id)}
+                className="bg-white text-center rounded-lg overflow-hidden shadow-md text-gray-800 hover:shadow-lg transition duration-200 cursor-pointer"
               >
-                <div className="bg-white text-center rounded-lg overflow-hidden shadow-md text-gray-800 hover:shadow-lg transition duration-200 cursor-pointer">
-                  <img
-                    src={product.image}
-                    alt={product.title}
-                    className="w-full h-40 object-contain p-4"
-                  />
-                  <div className="p-2">
-                    <h4 className="font-bold text-sm text-gray-800 mt-2">
-                      {product.title}
-                    </h4>
-                    <p className="text-xs text-gray-500 mt-1">${product.price}</p>
-                    <p className="text-xs text-gray-600 mt-1">{product.stock}</p>
-                    <div className="flex justify-center items-center mt-1">
-                      {Array.from({ length: 5 }, (_, i) => (
-                        <span
-                          key={i}
-                          className={`text-yellow-400 ${
-                            i < product.rating ? "text-yellow-400" : "text-gray-300"
-                          }`}
-                        >
-                          ★
-                        </span>
-                      ))}
-                    </div>
-                    <button className="bg-[#B88E2F] w-full text-white px-3 py-1 mt-2 rounded hover:bg-yellow-600 transition duration-200 text-xs md:text-sm">
-                      Add to Cart
-                    </button>
+                <img
+                  src={product.image}
+                  alt={product.title}
+                  className="w-full h-40 object-contain p-4"
+                />
+                <div className="p-2">
+                  <h4 className="font-bold text-sm text-gray-800 mt-2">
+                    {product.title}
+                  </h4>
+                  <p className="text-xs text-gray-500 mt-1">${product.price}</p>
+                  <p className="text-xs text-gray-600 mt-1">{product.stock}</p>
+                  <div className="flex justify-center items-center mt-1">
+                    {Array.from({ length: 5 }, (_, i) => (
+                      <span
+                        key={i}
+                        className={`text-yellow-400 ${
+                          i < product.rating ? "text-yellow-400" : "text-gray-300"
+                        }`}
+                      >
+                        ★
+                      </span>
+                    ))}
                   </div>
+                  <button className="bg-[#B88E2F] w-full text-white px-3 py-1 mt-2 rounded hover:bg-yellow-600 transition duration-200 text-xs md:text-sm">
+                    Add to Cart
+                  </button>
                 </div>
-              </Link>
+              </div>
             ))}
           </div>
         </div>

@@ -1,14 +1,33 @@
 'use client';
 
-import React, { useState } from 'react';
-import Navbar from '../components/navbar';
-import Image from 'next/image'
-import BottmNavigation from '../components/BottomNav';
+import React, { useState, useEffect } from 'react';
+import Navbar from '../../components/navbar';
+import Image from 'next/image';
+import BottmNavigation from '../../components/BottomNav';
+import { useRouter } from 'next/navigation';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchProductById } from '../../../reducers/productSlice';
+import { RootState } from '../../../reducers/store';
 
 const ProductPage: React.FC = () => {
     const [rating, setRating] = useState(5);
     const [feedback, setFeedback] = useState('');
     const [selectedImage, setSelectedImage] = useState<string>("/bill-mead.jpg");
+
+    const router = useRouter();
+    const dispatch = useDispatch();
+
+    const productId = router.query?.productId as string | undefined;
+
+    // Fetch product details when productId is available
+    useEffect(() => {
+        if (productId) {
+            dispatch(fetchProductById(Number(productId)));
+        }
+    }, [productId, dispatch]);
+
+    // Access product data from Redux store
+    const product = useSelector((state: RootState) => state.product.product);
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
@@ -24,32 +43,28 @@ const ProductPage: React.FC = () => {
             <section className="container mx-auto py-6 px-4 lg:px-12 overflow-x-hidden">
                 <div className="flex flex-col lg:flex-row">
 
-
                     {/* Product Thumbnail Section */}
                     <div className="w-full lg:w-[18%] h-30 flex flex-row lg:flex-col justify-center items-center lg:items-start mb-6 lg:mb-0 space-x-4 lg:space-x-0 lg:space-y-4">
-                        {
-                            Array.from(["/bill-mead.jpg", "/computer.jpg", "/Gas.jpg", "/sale.png"]).map((item, i) => (
-                                <div key={i} className="w-[60px] h-[60px] lg:w-[100px] lg:h-[100px]">
-                                    <Image
-                                        onClick={() => setSelectedImage(item)}
-                                        width={100}
-                                        height={100}
-                                        src={item}
-                                        alt="415w jinko solar panel"
-                                        className="rounded-md cursor-pointer w-full h-full object-cover"
-                                    />
-                                </div>
-                            ))
-                        }
+                        {["/bill-mead.jpg", "/computer.jpg", "/Gas.jpg", "/sale.png"].map((item, i) => (
+                            <div key={i} className="w-[60px] h-[60px] lg:w-[100px] lg:h-[100px]">
+                                <Image
+                                    onClick={() => setSelectedImage(item)}
+                                    width={100}
+                                    height={100}
+                                    src={item}
+                                    alt="Product thumbnail"
+                                    className="rounded-md cursor-pointer w-full h-full object-cover"
+                                />
+                            </div>
+                        ))}
                     </div>
 
-
-                    {/* Product Image Preview with Fixed Height */}
+                    {/* Product Image Preview */}
                     <div className="w-full lg:w-1/2 flex justify-center lg:justify-start mb-6 lg:mb-0">
-                        <div className="w-full h-[20rem] lg:h-[25rem]"> {/* Fixed height for the image preview */}
+                        <div className="w-full h-[20rem] lg:h-[25rem]">
                             <img
                                 src={selectedImage}
-                                alt="415w jinko solar panel"
+                                alt="Product preview"
                                 className="w-full h-full rounded-md object-cover"
                             />
                         </div>
@@ -57,7 +72,7 @@ const ProductPage: React.FC = () => {
 
                     {/* Product Details */}
                     <div className="w-full lg:w-1/2 lg:pl-12">
-                        <h1 className="text-2xl md:text-3xl font-bold text-gray-800">415w Jinko Solar Panel</h1>
+                        <h1 className="text-2xl md:text-3xl font-bold text-gray-800">{product?.name ?? 'Loading...'}</h1>
                         <p className="text-xl md:text-2xl text-yellow-600 mt-4">K2900</p>
                         <div className="flex items-center mt-4">
                             <span className="text-yellow-500 text-lg md:text-xl">★★★★☆</span>
@@ -74,7 +89,6 @@ const ProductPage: React.FC = () => {
                     </div>
                 </div>
             </section>
-
 
             {/* Featured Product + Reviews Section */}
             <section className="container mx-auto py-6 px-4 lg:px-12">
@@ -115,7 +129,6 @@ const ProductPage: React.FC = () => {
                 </div>
             </section>
 
-
             {/* Review Submission Section */}
             <section className="container mx-auto py-12">
                 <div className="bg-gray-100 p-6 rounded-lg">
@@ -153,7 +166,7 @@ const ProductPage: React.FC = () => {
                     </form>
                 </div>
             </section>
-            <BottmNavigation/>
+            <BottmNavigation />
         </div>
     );
 };

@@ -30,6 +30,7 @@ interface FetchCategoriesPayload {
 }
 
 interface ProductState {
+  product: any;
   products: Product[];
   categories: Category[];
   loading: boolean;
@@ -50,6 +51,23 @@ export const fetchProducts = createAsyncThunk(
     try {
       const response = await axios.get(`${process.env.NEXT_PUBLIC_API_ENDPOINT}/products/`);
       return response.data as FetchProductsPayload;
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response) {
+        return thunkAPI.rejectWithValue(error.response.data.message);
+      } else {
+        return thunkAPI.rejectWithValue('An unknown error occurred');
+      }
+    }
+  }
+);
+
+// Async thunk for fetching a single product by ID
+export const fetchProductById = createAsyncThunk(
+  'products/fetchProductById',
+  async (productId: number, thunkAPI) => {
+    try {
+      const response = await axios.get(`${process.env.NEXT_PUBLIC_API_ENDPOINT}/products/${productId}`);
+      return response.data;
     } catch (error) {
       if (axios.isAxiosError(error) && error.response) {
         return thunkAPI.rejectWithValue(error.response.data.message);
@@ -159,6 +177,18 @@ const productSlice = createSlice({
       state.categories = action.payload.results;
     });
     builder.addCase(fetchCategories.rejected, (state, action) => {
+      state.loading = false;
+      state.error = action.payload as string;
+    });
+    builder.addCase(fetchProductById.pending, (state) => {
+      state.loading = true;
+      state.error = null;
+    });
+    builder.addCase(fetchProductById.fulfilled, (state, action: PayloadAction<Product>) => {
+      state.loading = false;
+      state.products = [action.payload]; // Store product details
+    });
+    builder.addCase(fetchProductById.rejected, (state, action) => {
       state.loading = false;
       state.error = action.payload as string;
     });
