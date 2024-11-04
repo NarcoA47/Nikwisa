@@ -4,9 +4,9 @@ import React, { useState, useEffect } from 'react';
 import Navbar from '../../components/navbar';
 import Image from 'next/image';
 import BottmNavigation from '../../components/BottomNav';
-import { useRouter } from 'next/navigation';
+import { useParams } from 'next/navigation';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchProductById } from '../../../reducers/productSlice';
+// import { fetchProductById } from '../../../reducers/productSlice';
 import { RootState } from '../../../reducers/store';
 
 const ProductPage: React.FC = () => {
@@ -14,15 +14,17 @@ const ProductPage: React.FC = () => {
     const [feedback, setFeedback] = useState('');
     const [selectedImage, setSelectedImage] = useState<string>("/bill-mead.jpg");
 
-    const router = useRouter();
+    // const router = useRouter();
+    const params = useParams();
     const dispatch = useDispatch();
 
-    const productId = router.query?.productId as string | undefined;
+    const productId = params.productId;
+
 
     // Fetch product details when productId is available
     useEffect(() => {
         if (productId) {
-            dispatch(fetchProductById(Number(productId)));
+            // dispatch(fetchProductById(Number(productId)));
         }
     }, [productId, dispatch]);
 
