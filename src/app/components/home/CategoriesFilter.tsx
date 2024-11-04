@@ -22,7 +22,7 @@ const CategoriesFilter = () => {
   }
 
   return (
-    <div className="hidden md:flex">
+    <div className="md:flex ">
       <section className="my-12 mx-32 text-center items-center  ">
       <div className="flex justify-between items-center">
         <h3 className="text-xl font-semibold text-gray-800">Categories</h3>
@@ -38,7 +38,7 @@ const CategoriesFilter = () => {
             key={category.id}
             className="flex flex-col items-center text-center"
           >
-            <div className="md:w-24 md:h-24 h-10 w-10 bg-gray-200 rounded-full flex items-center justify-center">
+            <div className="md:w-24 md:h-24 sm:w-12 sm:h-12 h-10 w-10 bg-gray-200 rounded-full flex items-center justify-center">
               <img
                 src={category.image}
                 alt={category.name}

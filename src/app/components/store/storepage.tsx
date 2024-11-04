@@ -5,6 +5,7 @@ import { fetchStores } from '../../../reducers/storeSlice';
 import { RootState, AppDispatch } from '../../../reducers/store';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import { useRouter } from 'next/navigation';
+import BottomNav from '../BottomNav';
 
 const StoreCard: React.FC = () => {
   const dispatch: AppDispatch = useDispatch();
@@ -48,6 +49,7 @@ const StoreCard: React.FC = () => {
           </div>
         </div>
       ))}
+      <BottomNav/>
     </div>
   );
 };
