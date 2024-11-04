@@ -30,7 +30,7 @@ interface FetchCategoriesPayload {
 }
 
 interface ProductState {
-  product: any;
+  product: unknown;
   products: Product[];
   categories: Category[];
   loading: boolean;
@@ -42,6 +42,7 @@ const initialState: ProductState = {
   categories: [],
   loading: false,
   error: null,
+  product: undefined
 };
 
 // Async thunk for fetching products

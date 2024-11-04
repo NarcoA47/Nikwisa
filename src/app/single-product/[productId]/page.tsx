@@ -5,9 +5,9 @@ import Navbar from '../../components/navbar';
 import Image from 'next/image';
 import BottmNavigation from '../../components/BottomNav';
 import { useParams } from 'next/navigation';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 // import { fetchProductById } from '../../../reducers/productSlice';
-import { RootState } from '../../../reducers/store';
+// import { RootState } from '../../../reducers/store';
 
 const ProductPage: React.FC = () => {
     const [rating, setRating] = useState(5);
@@ -29,7 +29,7 @@ const ProductPage: React.FC = () => {
     }, [productId, dispatch]);
 
     // Access product data from Redux store
-    const product = useSelector((state: RootState) => state.product.product);
+    // const product = useSelector((state: RootState) => state.product.product);
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
@@ -74,7 +74,7 @@ const ProductPage: React.FC = () => {
 
                     {/* Product Details */}
                     <div className="w-full lg:w-1/2 lg:pl-12">
-                        <h1 className="text-2xl md:text-3xl font-bold text-gray-800">{product?.name ?? 'Loading...'}</h1>
+                        {/* <h1 className="text-2xl md:text-3xl font-bold text-gray-800">{product?.name ?? 'Loading...'}</h1> */}
                         <p className="text-xl md:text-2xl text-yellow-600 mt-4">K2900</p>
                         <div className="flex items-center mt-4">
                             <span className="text-yellow-500 text-lg md:text-xl">★★★★☆</span>
