@@ -1,176 +1,170 @@
-'use client';
-
-import React, { useState, useEffect } from 'react';
-import Navbar from '../../components/navbar';
+"use client"
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { useRouter } from 'next/router';
+import { fetchStoreById } from '@/reducers/storeSlice';
+import { fetchProductsByStoreId } from '@/reducers/productSlice';
+import { AppDispatch, RootState, store } from '@/reducers/store';
 import Image from 'next/image';
-import BottmNavigation from '../../components/BottomNav';
-import { useParams } from 'next/navigation';
-import { useDispatch } from 'react-redux';
-// import { fetchProductById } from '../../../reducers/productSlice';
-// import { RootState } from '../../../reducers/store';
+import LibraryAddIcon from '@mui/icons-material/LibraryAdd';
+import QuestionAnswerIcon from '@mui/icons-material/QuestionAnswer';
+import Link from 'next/link';
+import BottomNav from '@/app/components/BottomNav';
+import { StaticImport } from 'next/dist/shared/lib/get-img-props';
 
-const ProductPage: React.FC = () => {
-    const [rating, setRating] = useState(5);
-    const [feedback, setFeedback] = useState('');
-    const [selectedImage, setSelectedImage] = useState<string>("/bill-mead.jpg");
+const StoreDetailPage: React.FC = () => {
+  const router = useRouter();
+  const { storeId } = router.query;
+  const dispatch = useDispatch<AppDispatch>();
+  const store = useSelector((state: RootState) => state.store.selectedStore);
+  const products = useSelector((state: RootState) => (state.product as { products: unknown }).products);
+  const topSellingProducts = useSelector((state: RootState) => (state.product as { topSellingProducts: unknown }).topSellingProducts);
+  const loading = useSelector((state: RootState) => state.store.loading);
+  const error = useSelector((state: RootState) => state.store.error);
+  const [showTopSelling, setShowTopSelling] = useState(true);
 
-    // const router = useRouter();
-    const params = useParams();
-    const dispatch = useDispatch();
+  useEffect(() => {
+    if (storeId) {
+      dispatch(fetchStoreById(storeId as string));
+      dispatch(fetchProductsByStoreId(storeId as string));
+    //   dispatch(fetchProductsByStoreId(storeId as string));
+    }
+  }, [dispatch, storeId]);
 
-    const productId = params.productId;
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>{error}</p>;
 
+  const productsToShow = (showTopSelling ? topSellingProducts : products) as Array<{
+    name: string;
+    image: string | StaticImport;
+    price: string;
+    stock: string;
+    rating: number;
+  }>;
 
-    // Fetch product details when productId is available
-    useEffect(() => {
-        if (productId) {
-            // dispatch(fetchProductById(Number(productId)));
-        }
-    }, [productId, dispatch]);
+  return (
+    <>
+      <div className="min-h-screen bg-gray-50 sm:p-2 md:p-4 lg:p-6 mx-auto sm:px-2 md:px-4 lg:px-8 max-w-screen-xl">
+        {/* Store Banner */}
+        <section className="container mx-auto py-8">
+          <div className="flex flex-row items-center justify-between p-4 rounded-lg space-x-4">
+            {/* Store Image (First Section) */}
+            <div className="flex-shrink-0">
+              <Image
+                src={store?.image || '/default-store.jpg'}
+                alt={store?.name || 'Store Image'}
+                width={150}
+                height={150}
+                style={{ width: '100%', height: 'auto' }}
+                className="max-w-[100px] sm:max-w-[150px] md:max-w-[200px] lg:max-w-[200px]"
+              />
+            </div>
 
-    // Access product data from Redux store
-    // const product = useSelector((state: RootState) => state.product.product);
+            {/* Store Information (Second Section) */}
+            <div className="flex-1 text-center lg:text-left">
+              <h1 className="text-sm lg:text-3xl font-bold text-gray-800 mb-0">
+                {store?.name}
+              </h1>
+              <div className="flex items-center justify-center lg:justify-start space-x-2 mt-1">
+                <span className="text-yellow-500 text-lg lg:text-2xl">
+                  ★★★★☆
+                </span>
+                <span className="text-gray-500 text-xs lg:text-base">
+                  ({store?.reviewsCount} Reviews)
+                </span>
+              </div>
+              <p className="text-sm lg:text-lg text-gray-600 mt-1">
+                {store?.productsCount} products available
+              </p>
+            </div>
 
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-        // Handle form submission (e.g., send data to an API)
-        console.log({ rating, feedback });
-    };
+            {/* Action Icons (Third Section) */}
+            <div className="flex-shrink-0 flex flex-col space-y-2">
+              <button className="bg-green-500 text-white p-2 lg:p-3 rounded-full">
+                <LibraryAddIcon fontSize="small" />
+              </button>
+              <button className="bg-green-500 text-white p-2 lg:p-3 rounded-full">
+                <QuestionAnswerIcon fontSize="small" />
+              </button>
+            </div>
+          </div>
+        </section>
 
-    return (
-        <div className="font-sans bg-white text-gray-800">
-            <Navbar />
+        {/* Tabs for Top Selling and All Products */}
+        <section className="container mx-auto py-4 px-4">
+          <div className="flex justify-center lg:justify-start space-x-8 border-b border-gray-200 pb-4">
+            <button
+              className={`text-lg font-semibold text-gray-800 pb-2 ${showTopSelling ? 'border-b-4 border-yellow-600' : ''}`}
+              onClick={() => setShowTopSelling(true)}
+            >
+              Top Selling
+            </button>
+            <button
+              className={`text-lg font-semibold text-gray-800 pb-2 ${!showTopSelling ? 'border-b-4 border-yellow-600' : ''}`}
+              onClick={() => setShowTopSelling(false)}
+            >
+              All Products
+            </button>
+          </div>
 
-            {/* Main Product Section */}
-            <section className="container mx-auto py-6 px-4 lg:px-12 overflow-x-hidden">
-                <div className="flex flex-col lg:flex-row">
-
-                    {/* Product Thumbnail Section */}
-                    <div className="w-full lg:w-[18%] h-30 flex flex-row lg:flex-col justify-center items-center lg:items-start mb-6 lg:mb-0 space-x-4 lg:space-x-0 lg:space-y-4">
-                        {["/bill-mead.jpg", "/computer.jpg", "/Gas.jpg", "/sale.png"].map((item, i) => (
-                            <div key={i} className="w-[60px] h-[60px] lg:w-[100px] lg:h-[100px]">
-                                <Image
-                                    onClick={() => setSelectedImage(item)}
-                                    width={100}
-                                    height={100}
-                                    src={item}
-                                    alt="Product thumbnail"
-                                    className="rounded-md cursor-pointer w-full h-full object-cover"
-                                />
-                            </div>
-                        ))}
-                    </div>
-
-                    {/* Product Image Preview */}
-                    <div className="w-full lg:w-1/2 flex justify-center lg:justify-start mb-6 lg:mb-0">
-                        <div className="w-full h-[20rem] lg:h-[25rem]">
-                            <img
-                                src={selectedImage}
-                                alt="Product preview"
-                                className="w-full h-full rounded-md object-cover"
-                            />
-                        </div>
-                    </div>
-
-                    {/* Product Details */}
-                    <div className="w-full lg:w-1/2 lg:pl-12">
-                        {/* <h1 className="text-2xl md:text-3xl font-bold text-gray-800">{product?.name ?? 'Loading...'}</h1> */}
-                        <p className="text-xl md:text-2xl text-yellow-600 mt-4">K2900</p>
-                        <div className="flex items-center mt-4">
-                            <span className="text-yellow-500 text-lg md:text-xl">★★★★☆</span>
-                            <span className="ml-2 text-gray-600">|</span>
-                            <span className="ml-2 text-gray-600 text-sm md:text-base">5 Customer Reviews</span>
-                        </div>
-                        <p className="mt-4 text-sm md:text-base text-gray-600">
-                            Setting the bar as one of the loudest speakers in its class, the Kilburn is a compact, stout-hearted hero with a
-                            well-balanced audio which boasts a clear midrange and extended highs for a sound.
-                        </p>
-                        <button className="bg-white border border-gray-800 py-2 px-4 md:px-6 mt-4 hover:bg-gray-100 transition duration-200 text-sm md:text-base">
-                            Add To Cart
-                        </button>
-                    </div>
-                </div>
-            </section>
-
-            {/* Featured Product + Reviews Section */}
-            <section className="container mx-auto py-6 px-4 lg:px-12">
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    {/* Left Side: Featured Product */}
-                    <div>
-                        {Array.from({ length: 4 }).map((_, index) => (
-                            <div key={index} className="flex flex-col lg:flex-row items-start justify-center my-4">
-                                <Image width={250} height={250} src="/bill-mead.jpg" alt="Green Belt Africa" className="rounded-lg" />
-                                <div className="lg:ml-6 mt-4 lg:mt-0">
-                                    <h3 className="text-lg font-semibold text-gray-800">Green Belt Africa</h3>
-                                    <p className="text-yellow-600 mt-2">{"★".repeat(3)} {" | "} 37 Customer Reviews</p>
-                                    <button className="bg-yellow-600 text-white py-1 text-sm rounded-md px-2 mt-1 hover:bg-yellow-700 transition duration-200">
-                                        Enter Store
-                                    </button>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-
-                    {/* Right Side: Reviews List */}
-                    <div className="lg:w-full lg:pl-12">
-                        <h2 className="text-2xl font-bold text-gray-800">Reviews [5]</h2>
-                        <div className="space-y-6 mt-6">
-                            {[
-                                { name: 'Jabulani Chiringa', rating: 5, review: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.' },
-                                { name: 'Ihano Yowela', rating: 4, review: 'Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.' },
-                                { name: 'Sibatha Kaseba', rating: 5, review: 'Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.' },
-                            ].map((review, index) => (
-                                <div key={index} className="bg-[#FFF3E3] p-4 lg:p-6 shadow-md border border-gray-200 rounded-lg">
-                                    <h3 className="font-semibold text-lg text-gray-800">{review.name}</h3>
-                                    <p className="text-yellow-500">{"★".repeat(review.rating)}{"☆".repeat(5 - review.rating)}</p>
-                                    <p className="text-gray-600 mt-2 text-sm md:text-base">{review.review}</p>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            {/* Review Submission Section */}
-            <section className="container mx-auto py-12">
-                <div className="bg-gray-100 p-6 rounded-lg">
-                    <h2 className="text-2xl font-bold text-gray-800 mb-6">Leave a Review</h2>
-                    <form onSubmit={handleSubmit} className="bg-gray-300 p-6 rounded-lg space-y-4">
-                        <div>
-                            <label htmlFor="rating" className="block text-lg font-semibold text-gray-800 mb-2">Rating</label>
-                            <input
-                                type="number"
-                                id="rating"
-                                min="1"
-                                max="5"
-                                value={rating}
-                                onChange={(e) => setRating(Number(e.target.value))}
-                                className="w-full p-3 border border-gray-300 rounded-lg"
-                            />
-                        </div>
-                        <div>
-                            <label htmlFor="feedback" className="block text-lg font-semibold text-gray-800 mb-2">Feedback</label>
-                            <textarea
-                                id="feedback"
-                                rows={4}
-                                value={feedback}
-                                onChange={(e) => setFeedback(e.target.value)}
-                                className="w-full p-3 border border-gray-300 rounded-lg"
-                                placeholder="Hi! I'd like to ask about..."
-                            />
-                        </div>
-                        <button
-                            type="submit"
-                            className="bg-yellow-600 text-white py-2 px-6 mt-4 hover:bg-yellow-700 transition duration-200 w-full"
+          {/* Product Grid */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 mt-4">
+            {productsToShow.map((product: { name: string | number | bigint | boolean | React.ReactElement<unknown, string | React.JSXElementConstructor<unknown>> | Iterable<React.ReactNode> | Promise<React.AwaitedReactNode> | null | undefined; image: string | StaticImport; price: string | number | bigint | boolean | React.ReactElement<unknown, string | React.JSXElementConstructor<unknown>> | Iterable<React.ReactNode> | React.ReactPortal | Promise<React.AwaitedReactNode> | null | undefined; stock: string | number | bigint | boolean | React.ReactElement<unknown, string | React.JSXElementConstructor<unknown>> | Iterable<React.ReactNode> | React.ReactPortal | Promise<React.AwaitedReactNode> | null | undefined; rating: number; }, index: React.Key | null | undefined) => (
+              <Link
+                href={`/products/${typeof product.name === 'string' ? product.name.toLowerCase().replace(/\s+/g, '-') : ''}`}
+                key={index}
+              >
+                {/* Product Card */}
+                <div className="bg-white text-center rounded-lg overflow-hidden shadow-md text-gray-800 hover:shadow-lg transition duration-200 cursor-pointer">
+                  <Image
+                    src={product.image}
+                    alt={typeof product.name === 'string' ? product.name : 'Product Image'}
+                    width={160}
+                    height={160}
+                    className="w-full h-40 object-contain p-4"
+                  />
+                  <div className="p-2">
+                    <h4 className="font-bold text-sm text-gray-800 mt-2">
+                      {product.name}
+                    </h4>
+                    <p className="text-xs text-gray-500 mt-1">
+                      {product.price}
+                    </p>
+                    <p className="text-xs text-gray-600 mt-1">
+                      {product.stock}
+                    </p>
+                    <div className="flex justify-center items-center mt-1">
+                      {Array.from({ length: 5 }, (_, i) => (
+                        <span
+                          key={i}
+                          className={`text-yellow-400 ${
+                            i < product.rating ? 'text-yellow-400' : 'text-gray-300'
+                          }`}
                         >
-                            Submit
-                        </button>
-                    </form>
+                          ★
+                        </span>
+                      ))}
+                    </div>
+                    <button className="bg-[#B88E2F] w-full text-white px-3 py-1 mt-2 rounded hover:bg-yellow-600 transition duration-200 text-xs md:text-sm">
+                      Add to Cart
+                    </button>
+                  </div>
                 </div>
-            </section>
-            <BottmNavigation />
-        </div>
-    );
+              </Link>
+            ))}
+          </div>
+        </section>
+      </div>
+      <BottomNav />
+    </>
+  );
 };
 
-export default ProductPage;
+export default StoreDetailPage;
+
+export type LocalRootState = ReturnType<typeof store.getState> & {
+  product: {
+    topSellingProducts: unknown;
+    products: unknown;
+  };
+};
