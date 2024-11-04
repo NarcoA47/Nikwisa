@@ -1,8 +1,8 @@
 import { FC } from 'react';
 import Image from 'next/image';
-import Navbar from '../components/navbar';
+import Navbar from '../../components/navbar';
 import moment from 'moment';
-import BottomNav from '../components/BottomNav';
+import BottomNav from '../../components/BottomNav';
 
 const Home: FC = () => {
   return (

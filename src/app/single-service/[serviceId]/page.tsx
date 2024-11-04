@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
-import BottmNavigation from "../components/BottomNav";
-import Navbar from "../components/navbar";
+import BottmNavigation from "../../components/BottomNav";
+import Navbar from "../../components/navbar";
 
 const product = {
   tasker: "John Doe", // Adding tasker name
