@@ -16,7 +16,7 @@ const StoreDetailPage: React.FC = () => {
   const { storeId } = useParams();
   const dispatch = useDispatch<AppDispatch>();
   const store = useSelector((state: RootState) => state.store.selectedStore);
-  const products = useSelector((state: RootState) => state.product.products) as { name: string; image: string; price: string; stock: string; rating: number }[];
+  const products = useSelector((state: RootState) => state.product.products) as unknown as { name: string; image: string; price: string; stock: string; rating: number }[];
   const loading = useSelector((state: RootState) => state.store.loading);
   const error = useSelector((state: RootState) => state.store.error);
 
