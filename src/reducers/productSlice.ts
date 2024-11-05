@@ -3,7 +3,8 @@ import axios from 'axios';
 // import { ReactNode } from 'react';
 
 // Interfaces
-interface Product {
+export interface Product {
+  [x: string]: unknown;
   title: string | undefined;
   id: number;
   name: string;
@@ -12,6 +13,7 @@ interface Product {
   image: string;
   stock: number;
   rating: number;
+  category: string;
 }
 
 interface Category {

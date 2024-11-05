@@ -5,22 +5,13 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RootState, AppDispatch } from '../../../reducers/store';
 import { fetchCategories, fetchProducts } from '../../../reducers/productSlice';
 import SortingBar from '../SortingBar';
-
-export interface Product {
-  id: number;
-  title: string;
-  description: string;
-  price: string;
-  image: string;
-  category: string;
-  stock: React.ReactNode;
-  rating: number;
-}
+import { Product } from '../../../reducers/productSlice';
 
 export interface Category {
   id: number;
   name: string;
 }
+
 
 const Products = () => {
   const dispatch = useDispatch<AppDispatch>();

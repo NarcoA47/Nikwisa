@@ -1,14 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Product } from '../components/products/products';
 import { title } from 'process';
+import { Product } from '@/reducers/productSlice';
+// import { Product } from './products/products';
 
 
   interface SortingBarProps {
-
     items: Product[];
-  
     callback: (sortedItems: Product[]) => void;
-  
   }
   
 
