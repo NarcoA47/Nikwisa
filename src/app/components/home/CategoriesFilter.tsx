@@ -3,6 +3,12 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RootState, AppDispatch } from '../../../reducers/store';
 import { fetchCategories } from '../../../reducers/productSlice';
 
+interface Category {
+  id: number;
+  name: string;
+  image: string;
+}
+
 const CategoriesFilter = () => {
   const dispatch = useDispatch<AppDispatch>();
   const categories = useSelector((state: RootState) => state.product.categories);
@@ -32,7 +38,7 @@ const CategoriesFilter = () => {
       </div>
       {/* Horizontal Scrollable Container */}
       <div className="flex items-center justify-center overflow-x-auto space-x-6 mt-4 no-scrollbar">
-        {categories.map((category) => (
+        {categories.map((category: Category) => (
           <a
             href={`/categories/${category.name.toLowerCase()}`}
             key={category.id}
