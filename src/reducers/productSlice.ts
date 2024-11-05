@@ -4,6 +4,7 @@ import axios from 'axios';
 
 // Interfaces
 interface Product {
+  title: string | undefined;
   id: number;
   name: string;
   description: string;
