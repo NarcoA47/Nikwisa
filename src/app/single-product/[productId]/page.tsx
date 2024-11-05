@@ -1,7 +1,7 @@
 "use client"
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useRouter } from 'next/router';
+import { useParams } from 'next/navigation';
 import { fetchStoreById } from '@/reducers/storeSlice';
 import { fetchProductsByStoreId } from '@/reducers/productSlice';
 import { AppDispatch, RootState, store } from '@/reducers/store';
@@ -13,8 +13,7 @@ import BottomNav from '@/app/components/BottomNav';
 import { StaticImport } from 'next/dist/shared/lib/get-img-props';
 
 const StoreDetailPage: React.FC = () => {
-  const router = useRouter();
-  const { storeId } = router.query;
+  const { storeId } = useParams();
   const dispatch = useDispatch<AppDispatch>();
   const store = useSelector((state: RootState) => state.store.selectedStore);
   const products = useSelector((state: RootState) => (state.product as { products: unknown }).products);
