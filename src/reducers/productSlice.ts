@@ -167,6 +167,18 @@ const productSlice = createSlice({
       state.loading = false;
       state.error = action.payload as string;
     });
+    builder.addCase(fetchProductById.pending, (state) => {
+      state.loading = true;
+      state.error = null;
+    });
+    builder.addCase(fetchProductById.fulfilled, (state, action: PayloadAction<Product>) => {
+      state.loading = false;
+      state.selectedProduct = action.payload;
+    });
+    builder.addCase(fetchProductById.rejected, (state, action) => {
+      state.loading = false;
+      state.error = action.payload as string;
+    });
     builder.addCase(fetchProductsByStoreId.pending, (state) => {
       state.loading = true;
       state.error = null;
